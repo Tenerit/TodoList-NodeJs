@@ -36,8 +36,8 @@ app.use(bodyParser.json());
 app.use(methodOverride('_method'))
 
 // ROUTES
-app.use('/todos', require('./controllers/todos.js'))
-app.use('/users', require('./controllers/users.js'))
+app.use('/todos', require('./requete/todos.js'))
+app.use('/users', require('./requete/users.js'))
 
 app.all('/', (req, res, next) => {
   res.redirect(301, '/todos')
