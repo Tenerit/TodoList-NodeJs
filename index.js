@@ -47,4 +47,5 @@ app.get('*', (req, res, next) => {
 })
 
 //écoute sur le port 1211
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+app.listen(PORT, console.log(`Server est sur le port ${PORT}`));
+console.log(`Taper "localhost:${PORT}"`);
