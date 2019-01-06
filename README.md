@@ -1,11 +1,11 @@
 
 
-Projet NodeJs : Todolist ! 💆
+#  Projet NodeJs : Todolist ! 💆
 
 pour pouvoir lancer l\'application
-Faite
-npm install
+Faite un
+- npm install
 Suivie  
-node start
+- node start
 
-Puis acceder au serveur en recuperant le lien donner dans l'invite commande
+Puis acceder au serveur en recuperant le lien donner dans l'invite commande 😉
