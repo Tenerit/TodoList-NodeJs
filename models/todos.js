@@ -41,6 +41,3 @@ module.exports = {
     }
   },
 }
-
-
-/* COPYRIGHT © 2018 ARNAUD DAUGUEN GANS QUENTIN - ALL RIGHTS RESERVED */
