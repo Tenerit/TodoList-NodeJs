@@ -2,10 +2,21 @@
 
 #  Projet NodeJs : Todolist ! 💆
 
+
+Pour le lancement et l'instalation du projet
+
 Faite un
+```sh
 - npm install
-Suivie  
-- node start
+```
+Pour installer tout les packages
+
+
+Suivie de
+```sh
+- node index.js
+```
+
 
 Puis acceder au serveur en recuperant le lien donner dans l'invite commande 😉
 
