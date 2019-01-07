@@ -5,115 +5,32 @@ const Users = require('./../sql/users');
 const _ = require('lodash');
 
 
-//affiche les toutes les données de la base
-router.get('/', (req, res, next) => {
-
-Todos.getAll()
-  .then((rows) =>
-  {
-
-    res.format({
-      html: () => {
-        let contenue = '<table class="table"><tr><th>ID</th><th>Description</th><th>Completion</th><th>createdAt</th><th>updatedAt</th><th>userID</th></tr>'
-        
-        rows.forEach((row) => {
-          contenue += '<tr>'
-          contenue += '<td>' + row['id'] + '</td>'
-          contenue += '<td>' + row['name'] + '</td>'
-          contenue += '<td>' + row['completion'] + '</td>'
-          contenue += '<td>' + row['createdAt'] + '</td>'
-          contenue += '<td>' + row['updatedAt'] + '</td>'
-          contenue += '<td>' + row['userId'] + '</td>'
-          contenue += '<td> <form action="/todos/'+row['id']+'/edit/?_method=GET", method="GET"> <button type="submit" class="btn btn-primary">Modifier</button> </form> </td>'
-          contenue += '<td> <form action="/todos/'+row['id']+'/?_method=GET", method="GET"> <button type="submit" class="btn btn-success">Afficher</button> </form> </td>'
-          contenue += '<td> <form action="/todos/'+row['id']+'/?_method=DELETE", method="POST"> <button type="submit" class="btn btn-danger">Supprimer</button> </form> </td>'
-          contenue += '</tr>'
-        })
-        
-        contenue += '</table>'
-
-        res.render("index", {  
-            title: 'Todolist',
-            content: contenue
-        })
-      },
-      json: () => {
-          res.json(todos)
-      }
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-    return next(err)
-  })
-})
-
-
-//affiche toutes les données de la base selon l'id
-router.get('/:id', (req, res, next) => {
-  if (req.params.id % 1 !== 0) {
-    return next(new Error("404 NOT FOUND"))
-  }
-  Todos.findOne(req.params.id)
-  .then((todo) => {
-    if (!todo) {
-      return next(new Error("404 NOT FOUND"))
-    }
-    res.format({
-      html: () => { // Prepare contenue
-        let contenue = '<table class="table"><tr><th>ID</th><th>Description</th><th>Completion</th><th>createdAt</th><th>updatedAt</th><th>userID</th></tr>'
-        contenue += '<tr>'
-        contenue += '<td>' + todo['id'] + '</td>'
-        contenue += '<td>' + todo['name'] + '</td>'
-        contenue += '<td>' + todo['completion'] + '</td>'
-        contenue += '<td>' + todo['createdAt'] + '</td>'
-        contenue += '<td>' + todo['updatedAt'] + '</td>'
-        contenue += '<td>' + todo['userId'] + '</td>'
-        contenue += '</tr>'
-        contenue += '</table>'
-
-        res.render("show", {  
-            title: 'Todo n°' + todo['id'],
-            h1Title: 'Todo n°' + todo['id'],
-            content: contenue
-        })
-      },
-      json: () => {
-        res.json(todo)
-      }
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-    return next(err)
-  })
-})
-
-//afficher l'id sélectionner
+// GET editing todo
+// DONE
 router.get('/:id/edit', (req, res, next) => {
   if (req.params.id % 1 !== 0) {
-    return next(new Error("404 NOT FOUND"))
+    return next(new Error("Error 404"))
   }
   Todos.findOne(req.params.id)
   .then((todo) => {
     if (!todo) {
-      return next(new Error("404 NOT FOUND"))
+      return next(new Error("Error 404"))
     }
 
-    let completion = {}
+    let completion = {} //niveaux des todos
 
-    if(todo.completion === "Todo"){
-      completion.todo = true
+    if(todo.completion === "A faire"){
+      completion.Afaire = true
     }
-    if(todo.completion === "In Progress"){
-      completion.inProgress = true
+    if(todo.completion === "En cours"){
+      completion.Encours = true
     }
     if(todo.completion === "Done"){
       completion.done = true
     }
 
     res.render("form_todo", {
-      title: "Edit a todo",
+      title: "Edit de la todo",
       formTitle: "Edit todo n°" + req.params.id,
       todo: todo,
       completion: completion,
@@ -121,12 +38,12 @@ router.get('/:id/edit', (req, res, next) => {
     })
   })
   .catch((err) => {
-    return next(new Error("404 NOT FOUND"))
+    return next(new Error("Error 404"))
   })
 })
 
+//Ajout de la todo
 
-//permet ajouter des todos
 router.get('/add', (req, res, next) => {
   let userList = ''
   Users.getAllUserIds()
@@ -141,8 +58,8 @@ router.get('/add', (req, res, next) => {
     })
 
     res.render("form_todo", {
-      title: "Ajouter des todos",
-      formTitle: "Créer des Todos",
+      title: "Add a todo",
+      formTitle: "Create a Todo",
       idAndMethod: "/?_method=POST",
       userList : userList
     })
@@ -153,13 +70,57 @@ router.get('/add', (req, res, next) => {
   })
 })
 
-//update bdd
+
+// GET a todo
+// DONE
+router.get('/:id', (req, res, next) => {
+  if (req.params.id % 1 !== 0) {
+    return next(new Error("Error 404"))
+  }
+  Todos.findOne(req.params.id)
+  .then((todo) => {
+    if (!todo) {
+      return next(new Error("Error 404 "))
+    }
+    res.format({
+      html: () => { // Prepare content
+        let content = '<table class="table"><tr><th>ID</th><th>Description</th><th>Completion</th><th>createdAt</th><th>updatedAt</th><th>userID</th></tr>'
+        content += '<tr>'
+        content += '<td>' + todo['id'] + '</td>'
+        content += '<td>' + todo['name'] + '</td>'
+        content += '<td>' + todo['completion'] + '</td>'
+        content += '<td>' + todo['createdAt'] + '</td>'
+        content += '<td>' + todo['updatedAt'] + '</td>'
+        content += '<td>' + todo['userId'] + '</td>'
+        content += '</tr>'
+        content += '</table>'
+
+        res.render("show", {  
+            title: 'Todo n°' + todo['id'],
+            h1Title: 'Todo n°' + todo['id'],
+            content: content
+        })
+      },
+      json: () => {
+        res.json(todo)
+      }
+    })
+  })
+  .catch((err) => {
+    console.log(err)
+    return next(err)
+  })
+})
+
+
+// EDIT a todo
+// DONE
 router.patch('/:id', (req, res, next) => {
   if (req.params.id % 1 !== 0) {
-    return next(new Error("404 NOT FOUND"))
+    return next(new Error("Error 404"))
   }
 
-  let changes = {}
+  let changes = {} // Pour connaitre les changements des todos
 
   if (req.body.name) {
     changes.name = req.body.name
@@ -168,7 +129,7 @@ router.patch('/:id', (req, res, next) => {
     changes.completion = req.body.completion
   }
 
-  changes.id = req.params.id
+  changes.id = req.params.id // Add id
 
   Todos.update(changes)
   .then((todo) => {
@@ -188,15 +149,15 @@ router.patch('/:id', (req, res, next) => {
 })
 
 
-//Suppirmer les todos
+// Delete de a todo
 router.delete('/:id', (req, res, next) => {
   if (req.params.id % 1 !== 0) {
-    return next(new Error("404 NOT FOUND"))
+    return next(new Error("Error 404"))
   }
   Todos.findOne(req.params.id)
   .then((todo) => {
     if(!todo){
-      return next(new Error("404 NOT FOUND"))
+      return next(new Error("404 Error"))
     }
     Todos.delete(req.params.id)
     .then(() => {
@@ -217,10 +178,10 @@ router.delete('/:id', (req, res, next) => {
 })
 
 
-//ajoute des todos
+//Creation de todos
 router.post('/', (req, res, next) => {
   if (!req.body.name) {
-    return next(new Error("Please enter a name for the todo"))
+    return next(new Error("Entrée le nom de la todo"))
   }
   Todos.create([req.body.name, req.body.completion, req.body.userId])
   .then((todo) => {
@@ -240,7 +201,53 @@ router.post('/', (req, res, next) => {
   })
 })
 
-//erreur 404
+
+
+//Get des todos
+router.get('/', (req, res, next) => {
+
+  Todos.getAll()
+  .then((todos) =>
+  {
+
+    res.format({
+      html: () => {
+        let content = '<table class="table"><tr><th>ID</th><th>Description</th><th>Completion</th><th>createdAt</th><th>updatedAt</th><th>userID</th></tr>'
+        
+        todos.forEach((todo) => {
+          content += '<tr>'
+          content += '<td>' + todo['id'] + '</td>'
+          content += '<td>' + todo['name'] + '</td>'
+          content += '<td>' + todo['completion'] + '</td>'
+          content += '<td>' + todo['createdAt'] + '</td>'
+          content += '<td>' + todo['updatedAt'] + '</td>'
+          content += '<td>' + todo['userId'] + '</td>'
+          content += '<td> <form action="/todos/'+todo['id']+'/edit/?_method=GET", method="GET"> <button type="submit" class="btn btn-success"><i class="fa fa-pencil fa-lg mr-2"></i>Edit</button> </form> </td>'
+          content += '<td> <form action="/todos/'+todo['id']+'/?_method=GET", method="GET"> <button type="submit" class="btn btn-info"><i class="fa fa-eye fa-lg mr-2"></i>See</button> </form> </td>'
+          content += '<td> <form action="/todos/'+todo['id']+'/?_method=DELETE", method="POST"> <button type="submit" class="btn btn-danger"><i class="fa fa-trash-o fa-lg mr-2"></i>Remove</button> </form> </td>'
+          content += '</tr>'
+        })
+        
+        content += '</table>'
+
+        res.render("index", {  
+            title: 'Todolist',
+            content: content
+        })
+      },
+      json: () => {
+          res.json(todos)
+      }
+    })
+  })
+  .catch((err) => {
+    console.log(err)
+    return next(err)
+  })
+})
+
+
+// Erreur 404
 router.use((err, req, res, next) => {
   res.format({
     html: () => {
@@ -253,12 +260,10 @@ router.use((err, req, res, next) => {
       console.log(err)
       res.json({
         message: err.message,
-        description: "An error occured"
+        description: "Oh zut une erreur"
       })
     }
   })
 })
 
-
 module.exports = router
-

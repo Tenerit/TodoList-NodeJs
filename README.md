@@ -3,13 +3,13 @@
 #  Projet NodeJs : Todolist ! 💆
 
 
-Pour le lancement et l'instalation du projet
+Prérequis
 
 Faite un
 ```sh
 - npm install
 ```
-Pour installer tout les packages
+//Pour installer tout les packages
 
 
 Suivie de

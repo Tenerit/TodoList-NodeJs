@@ -24,13 +24,13 @@ router.get('/:id/todos', (req, res, next) => {
       res.format({
         html: () => {
           
-          let contenue = '<table class="table"><tr><th>ID</th><th>Description</th><th>Completion</th><th>createdAt</th><th>updatedAt</th></tr>'
+          let contenue = '<table class="table"><tr><th>ID</th><th>Description</th><th>Niveau</th><th>createdAt</th><th>updatedAt</th></tr>'
           
           rows.forEach((row) => {
             contenue += '<tr>'
             contenue += '<td>' + row['id'] + '</td>'
             contenue += '<td>' + row['name'] + '</td>'
-            contenue += '<td>' + row['completion'] + '</td>'
+            contenue += '<td>' + row['Niveau'] + '</td>'
             contenue += '<td>' + row['createdAt'] + '</td>'
             contenue += '<td>' + row['updatedAt'] + '</td>'
             contenue += '<td> <form action="/todos/'+row['id']+'/edit/?_method=GET", method="GET"> <button type="submit" class="btn btn-success"><i class="fa fa-pencil fa-lg mr-2"></i>Edit</button> </form> </td>'
