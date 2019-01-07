@@ -9,7 +9,7 @@ Faite un
 ```sh
 - npm install
 ```
-//Pour installer tout les packages
+//Pour installer tous les packages
 
 
 Suivie de
